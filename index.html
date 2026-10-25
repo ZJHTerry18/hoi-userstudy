@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hand-Object Interaction Generation User Study</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --card: #fff; --text: #1d2330; --muted: #5b6475;
+    --border: #dde1e7; --accent: #2f6fde; --accent-soft: #e6eefc;
+    --note-bg: #fff8e6; --note-border: #f0c75e;
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+         font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 1280px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 1.5rem; margin: 0 0 16px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; }
+
+  /* Start page */
+  .start { min-height: calc(100vh - 48px); display: flex; align-items: center; justify-content: center; }
+  .start .card { max-width: 720px; width: 100%; padding: 32px 36px;
+                 border: 2px solid var(--accent); box-shadow: 0 8px 32px rgba(47, 111, 222, .15); }
+  .start h1 { text-align: center; font-size: 1.75rem; margin-bottom: 20px; }
+  .start h2 { font-size: 1.1rem; margin: 0 0 8px; }
+  .start ol { margin: 0 0 20px; padding-left: 22px; }
+  .start ol li { margin-bottom: 6px; }
+  .note { background: var(--note-bg); border: 1px solid var(--note-border); border-radius: 8px; padding: 12px 16px; margin-bottom: 24px; }
+  .note h2 { margin-bottom: 4px; }
+  .note ul { margin: 0; padding-left: 20px; }
+  .start-action { text-align: center; }
+  .start-action p { color: var(--muted); margin: 0 0 12px; }
+  .start-action button { font-size: 1.1rem; padding: 12px 48px; }
+
+  /* Study */
+  details.instructions summary { cursor: pointer; font-weight: 600; }
+  details.instructions ol { margin: 8px 0 0; padding-left: 20px; color: var(--muted); }
+  .progress { display: flex; align-items: center; gap: 12px; margin: 20px 0 12px; color: var(--muted); font-size: .9rem; }
+  .bar { flex: 1; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .bar > div { height: 100%; background: var(--accent); transition: width .2s; }
+  .videos { display: grid; grid-template-columns: repeat(var(--cols, 2), 1fr); gap: 16px; }
+  .side { padding: 12px; }
+  .side h3 { margin: 0 0 8px; font-size: 1rem; text-align: center; }
+  /* Cap height so the question and buttons stay on screen on a laptop. */
+  .side video { display: block; width: 100%; max-width: 45vh; aspect-ratio: 1; margin: 0 auto 8px; border-radius: 6px; background: #fff; }
+  .controls { text-align: center; margin: 12px 0 0; }
+  .question { margin-top: 16px; text-align: center; }
+  .question p { font-size: 1.15rem; font-weight: 600; margin: 0 0 12px; }
+  .choices { display: flex; justify-content: center; gap: 16px; }
+  .choice { min-width: 140px; padding: 12px 20px; font-size: 1rem; border: 2px solid var(--border);
+            border-radius: 8px; background: var(--card); color: var(--text); cursor: pointer; }
+  .choice.selected { border-color: var(--accent); background: var(--accent-soft); font-weight: 600; }
+  .nav { text-align: right; margin-top: 16px; }
+  button.primary { padding: 10px 28px; font-size: 1rem; border: 0; border-radius: 8px;
+                   background: var(--accent); color: #fff; cursor: pointer; }
+  button.primary:disabled { opacity: .4; cursor: not-allowed; }
+  button.secondary { padding: 6px 14px; border: 1px solid var(--border); border-radius: 6px;
+                     background: var(--card); cursor: pointer; }
+  .done { max-width: 640px; margin: 15vh auto 0; text-align: center; padding: 40px 24px; }
+  @media (max-width: 700px) {
+    .videos { grid-template-columns: 1fr; } .choices { flex-wrap: wrap; }
+    .start .card { padding: 24px 20px; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <section class="start" id="start">
+    <div class="card">
+      <h1 class="study-title"></h1>
+      <h2>Instructions</h2>
+      <ol class="instruction-list"></ol>
+      <div class="note">
+        <h2>Note</h2>
+        <ul id="notes"></ul>
+      </div>
+      <div class="start-action">
+        <p>When you are ready, click <strong>Start</strong> to begin.</p>
+        <button class="primary" id="start-btn">Start</button>
+      </div>
+    </div>
+  </section>
+
+  <div id="study" hidden>
+    <h1 class="study-title"></h1>
+    <details class="card instructions" open>
+      <summary>Instructions</summary>
+      <ol class="instruction-list"></ol>
+    </details>
+    <div class="progress"><span id="progress-text"></span><div class="bar"><div id="progress-bar"></div></div></div>
+    <section class="videos" id="videos"></section>
+    <div class="controls"><button class="secondary" id="replay">Replay both</button></div>
+
+    <section class="card question">
+      <p id="question"></p>
+      <div class="choices" id="choices"></div>
+    </section>
+    <div class="nav"><button class="primary" id="next" disabled>Next</button></div>
+  </div>
+
+  <section class="card done" id="done" hidden>
+    <h2 id="done-title"></h2>
+    <p id="done-msg"></p>
+    <button class="secondary" id="redownload" hidden>Download again</button>
+  </section>
+</main>
+
+<script src="trials_data.js"></script>
+<script src="trials.js"></script>
+<script>
+(() => {
+  const cfg = window.STUDY_CONFIG;
+  const $ = (id) => document.getElementById(id);
+  const shuffle = (a) => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  const fillList = (el, items) => items.forEach((t) => { const li = document.createElement("li"); li.textContent = t; el.appendChild(li); });
+
+  document.title = cfg.title;
+  document.querySelectorAll(".study-title").forEach((el) => { el.textContent = cfg.title; });
+  document.querySelectorAll(".instruction-list").forEach((el) => fillList(el, cfg.instructions));
+  fillList($("notes"), cfg.notes.map((t) => t.replace("{n}", cfg.trials.length * cfg.comparisons.length)));
+  $("question").textContent = cfg.question;
+
+  const participantId = Math.random().toString(36).slice(2, 10);
+  let startedAt;
+  // Each trial gets its own method -> column assignment.
+  // Expand each sample into one question per comparison, each with its own left/right assignment.
+  const questions = cfg.trials.flatMap((t) => cfg.comparisons.map((pair) => ({
+    ...t,
+    sample_id: t.id,
+    id: `${t.id}|${pair.join("-vs-")}`,
+    pair,
+    layout: cfg.randomizePositions ? shuffle([...pair]) : [...pair],
+  })));
+  const trials = cfg.randomizeOrder ? shuffle(questions) : questions;
+  $("videos").style.setProperty("--cols", cfg.positions.length);
+
+  // Build columns and choice buttons once; only the video sources change per trial.
+  const videos = cfg.positions.map((pos) => {
+    const card = document.createElement("div");
+    card.className = "card side";
+    card.innerHTML = `<h3>${pos}</h3>`;
+    const v = document.createElement("video");
+    Object.assign(v, { muted: true, loop: true, autoplay: true, playsInline: true, controls: false, preload: "auto" });
+    card.appendChild(v);
+    $("videos").appendChild(card);
+    return v;
+  });
+  const choiceButtons = cfg.positions.map((pos, i) => {
+    const b = document.createElement("button");
+    b.className = "choice";
+    b.textContent = pos;
+    b.addEventListener("click", () => {
+      choice = i;
+      choiceButtons.forEach((x) => x.classList.toggle("selected", x === b));
+      $("next").disabled = false;
+    });
+    $("choices").appendChild(b);
+    return b;
+  });
+
+  const responses = [];
+  let idx = 0, choice = null, trialStart = 0;
+
+  // Warn before leaving mid-study, since progress is not saved.
+  const warnOnLeave = (e) => { e.preventDefault(); e.returnValue = ""; };
+
+  $("start-btn").addEventListener("click", () => {
+    startedAt = new Date();
+    $("start").hidden = true;
+    $("study").hidden = false;
+    window.addEventListener("beforeunload", warnOnLeave);
+    show();
+  });
+
+  function show() {
+    const t = trials[idx];
+    t.layout.forEach((m, i) => { videos[i].src = t.videos[m]; });
+    choice = null;
+    choiceButtons.forEach((b) => b.classList.remove("selected"));
+    $("next").disabled = true;
+    $("next").textContent = idx === trials.length - 1 ? "Finish" : "Next";
+    $("progress-text").textContent = `Question ${idx + 1} of ${trials.length}`;
+    $("progress-bar").style.width = `${(idx / trials.length) * 100}%`;
+    trialStart = performance.now();
+    window.scrollTo({ top: $("progress-text").offsetTop - 16, behavior: "smooth" });
+  }
+
+  $("replay").addEventListener("click", () => {
+    videos.forEach((v) => { v.currentTime = 0; v.play(); });
+  });
+
+  $("next").addEventListener("click", () => {
+    const t = trials[idx];
+    const chosen = t.layout[choice];
+    responses.push({
+      trial_id: t.id,
+      sample_id: t.sample_id,
+      dataset: t.dataset,
+      comparison: t.pair.join("-vs-"),
+      view: t.view,
+      order: idx,
+      layout: Object.fromEntries(cfg.positions.map((p, i) => [p.toLowerCase(), t.layout[i]])),
+      choice_position: cfg.positions[choice].toLowerCase(),
+      chosen_method: chosen,
+      prefers_ours: chosen === "ours",
+      response_time_s: +((performance.now() - trialStart) / 1000).toFixed(2),
+    });
+    idx += 1;
+    if (idx < trials.length) show(); else finish();
+  });
+
+  let result, filename;
+  function download() {
+    const blob = new Blob([JSON.stringify(result, null, 2)], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  }
+
+  // POST as text/plain so the browser sends no CORS preflight (Apps Script can't answer one).
+  async function submit() {
+    if (!cfg.submitUrl) return false;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        const res = await fetch(cfg.submitUrl, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(result),
+        });
+        if ((await res.json()).ok) return true;
+      } catch (e) {
+        await new Promise((r) => setTimeout(r, 1000 * (attempt + 1)));
+      }
+    }
+    return false;
+  }
+
+  async function finish() {
+    videos.forEach((v) => { v.pause(); v.removeAttribute("src"); });
+    const finishedAt = new Date();
+    // e.g. {"ours-vs-mdm": {"ours": 14, "mdm": 6}, ...}
+    const counts = Object.fromEntries(cfg.comparisons.map((pair) => {
+      const rs = responses.filter((r) => r.comparison === pair.join("-vs-"));
+      return [pair.join("-vs-"), Object.fromEntries(pair.map((m) => [m, rs.filter((r) => r.chosen_method === m).length]))];
+    }));
+    result = {
+      study: cfg.title,
+      participant_id: participantId,
+      started_at: startedAt.toISOString(),
+      finished_at: finishedAt.toISOString(),
+      user_agent: navigator.userAgent,
+      n_trials: responses.length,
+      chosen_counts: counts,
+      responses,
+    };
+    filename = `hoi_userstudy_${participantId}_${finishedAt.toISOString().slice(0, 19).replace(/[:T]/g, "-")}.json`;
+    $("study").hidden = true;
+    $("done").hidden = false;
+    $("done-title").textContent = "Submitting your answers…";
+    $("done-msg").textContent = "Please keep this page open for a moment.";
+
+    const ok = await submit();
+    window.removeEventListener("beforeunload", warnOnLeave);
+    if (ok) {
+      $("done-title").textContent = "Thank you!";
+      $("done-msg").textContent = "Your answers have been submitted. You can now close this page.";
+    } else {
+      download();
+      $("done-title").textContent = "Thank you!";
+      $("done-msg").innerHTML = "";
+      $("done-msg").append(
+        "Your answers could not be submitted automatically, so they have been downloaded as ",
+        Object.assign(document.createElement("code"), { textContent: filename }),
+        `. Please email this file to ${cfg.contactEmail || "the study organiser"}.`,
+      );
+      $("redownload").hidden = false;
+    }
+  }
+  $("redownload").addEventListener("click", download);
+})();
+</script>
+</body>
+</html>
