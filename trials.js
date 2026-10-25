@@ -17,9 +17,9 @@ window.STUDY_CONFIG = {
   ],
   // Google Apps Script web app URL (see README, "Automatic result collection").
   // Leave empty to fall back to downloading the .json file.
-  submitUrl: "",
+  submitUrl: "https://script.google.com/macros/s/AKfycbwa9-hAouV1dXD-BEHsQYi48b25YE2yYqydy22uzRN6jgycDCQWHUewg3FAEYyocKCp/exec",
   // Shown only if automatic submission fails, so the participant can email the file instead.
-  contactEmail: "",  // TODO: your email address
+  contactEmail: "zhaojiahe1@gmail.com",  // TODO: your email address
   // Each sample becomes one question per comparison (keys into each sample's `videos`).
   comparisons: [["ours", "mdm"], ["ours", "bimart-ho"]],
   positions: ["Left", "Right"],
