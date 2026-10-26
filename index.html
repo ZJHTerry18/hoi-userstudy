@@ -55,7 +55,8 @@
               margin-top: 1px; border-radius: 50%; color: #fff; font-size: 12px; }
   .ex.good .icon { background: var(--good); } .ex.bad .icon { background: var(--bad); }
   .guide-action { text-align: center; margin-top: 24px; }
-  .guide-action button { font-size: 1.05rem; padding: 12px 32px; }
+  .guide-action button { font-size: 1.05rem; padding: 12px 48px; }
+  .guide-action p { color: var(--muted); margin: 10px 0 0; font-size: .95rem; }
 
   /* Study */
   details.instructions summary { cursor: pointer; font-weight: 600; }
@@ -68,7 +69,6 @@
   .side h3 { margin: 0 0 8px; font-size: 1rem; text-align: center; }
   /* Cap height so the question and buttons stay on screen on a laptop. */
   .side video { display: block; width: 100%; max-width: 45vh; aspect-ratio: 1; margin: 0 auto 8px; border-radius: 6px; background: #fff; }
-  .controls { text-align: center; margin: 12px 0 0; }
   .question { margin-top: 16px; text-align: center; }
   .question p { font-size: 1.15rem; font-weight: 600; margin: 0 0 12px; }
   .question p.criteria { display: inline-block; font-size: 1rem; font-weight: 400; margin: -4px 0 14px; padding: 6px 14px;
@@ -78,7 +78,8 @@
             border-radius: 8px; background: var(--card); color: var(--text); cursor: pointer; }
   kbd { font: .8em ui-monospace, SFMono-Regular, Menlo, monospace; padding: 1px 5px; border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 4px; background: var(--bg); }
   .choice.selected { border-color: var(--accent); background: var(--accent-soft); font-weight: 600; }
-  .nav { text-align: right; margin-top: 16px; }
+  .nav { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; }
+  .nav button.secondary { padding: 10px 20px; font-size: 1rem; border-radius: 8px; }
   button.primary { padding: 10px 28px; font-size: 1rem; border: 0; border-radius: 8px;
                    background: var(--accent); color: #fff; cursor: pointer; }
   button.primary:disabled { opacity: .4; cursor: not-allowed; }
@@ -118,7 +119,10 @@
       <div class="ex-grid" id="ex-good"></div>
       <h2 class="ex-label bad">Bad examples</h2>
       <div class="ex-grid" id="ex-bad"></div>
-      <div class="guide-action"><button class="primary" id="guide-btn"></button></div>
+      <div class="guide-action">
+        <button class="primary" id="guide-btn"></button>
+        <p id="guide-hint">You can go back to view these examples at any time during the test by clicking "View Examples".</p>
+      </div>
     </div>
   </section>
 
@@ -130,17 +134,16 @@
     </details>
     <div class="progress"><span id="progress-text"></span><div class="bar"><div id="progress-bar"></div></div></div>
     <section class="videos" id="videos"></section>
-    <div class="controls">
-      <button class="secondary" id="replay">Replay both</button>
-      <button class="secondary" id="show-guide">View examples</button>
-    </div>
 
     <section class="card question">
       <p id="question"></p>
       <p class="criteria" id="criteria"></p>
       <div class="choices" id="choices"></div>
     </section>
-    <div class="nav"><button class="primary" id="next" disabled>Next</button></div>
+    <div class="nav">
+      <button class="secondary" id="show-guide">View Examples</button>
+      <button class="primary" id="next" disabled>Next</button>
+    </div>
   </div>
 
   <section class="card done" id="done" hidden>
@@ -243,7 +246,8 @@
   function openGuide(mode) {
     guideMode = mode;
     $("guide").classList.toggle("overlay", mode === "overlay");
-    $("guide-btn").textContent = mode === "intro" ? "I understand, begin the questions" : "Back to the question";
+    $("guide-btn").textContent = mode === "intro" ? "Start" : "Back to the question";
+    $("guide-hint").hidden = mode !== "intro";
     exVideos.forEach((v) => {
       if (!v.getAttribute("src")) v.src = v.dataset.src;
       v.currentTime = 0;
@@ -309,10 +313,6 @@
     if (i >= 0) { e.preventDefault(); choiceButtons[i].click(); }  // also stops arrows scrolling the page
     // preventDefault also stops Enter from "clicking" a focused button a second time.
     else if (e.key === "Enter") { e.preventDefault(); if (!$("next").disabled) $("next").click(); }
-  });
-
-  $("replay").addEventListener("click", () => {
-    videos.forEach((v) => { v.currentTime = 0; v.play(); });
   });
 
   $("next").addEventListener("click", () => {

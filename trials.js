@@ -14,12 +14,12 @@ window.STUDY_CONFIG = {
   // Instructions may contain simple HTML such as <strong>.
   instructions: [
     "In each question you will see two rendered videos of hands interacting with an object in a 3D scene, shown side by side.",
-    "Watch both videos carefully. They loop automatically; use \"Replay both\" to restart them together.",
+    "Watch both videos carefully. They loop automatically.",
     "Choose the video (Left or Right) whose hand-object motion looks more realistic in the scene. You can also press <kbd>←</kbd> or <kbd>→</kbd>.",
-    "You can review the good and bad examples at any time with the \"View examples\" button.",
+    "You can review the good and bad examples at any time with the \"View Examples\" button.",
     "Click \"Next\" (or press <kbd>Enter</kbd>) to continue. On the last question, click \"Finish\" and your answers will be submitted automatically.",
   ],
-  // Example clips shown after Start (and via "View examples" during the questions).
+  // Example clips shown after Start (and via "View Examples" during the questions).
   examples: {
     good: [
       { src: "videos_selected/explanation/good_1.mp4", points: GOOD_POINTS },
