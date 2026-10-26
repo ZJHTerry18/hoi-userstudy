@@ -1,14 +1,15 @@
 // Study configuration. The trial list itself (video paths) is generated into trials_data.js
 // by tools/build_selected.py.
 window.STUDY_CONFIG = {
-  title: "Hand-Object Interaction Generation User Study",
+  title: "3D Hand-Object Interaction Generation User Study",
   question: "Which hand-object motion looks more realistic in the scene?",
+  // Instructions may contain simple HTML such as <strong>.
   instructions: [
-    "In each question you will see two videos of hands interacting with an object, shown side by side.",
+    "In each question you will see two rendered videos of hands interacting with an object in a 3D scene, shown side by side.",
     "Watch both videos carefully. They loop automatically; use \"Replay both\" to restart them together.",
-    "Choose the video (Left or Right) whose hand-object motion looks more realistic in the scene.",
-    "Consider contact, penetration, hand pose naturalness and motion smoothness.",
-    "Click \"Next\" to continue. On the last question, click \"Finish\" and your answers will be submitted automatically.",
+    "Choose the video (Left or Right) whose hand-object motion looks more realistic in the scene. You can also press <kbd>L</kbd> or <kbd>R</kbd>.",
+    "Evaluate based on <strong>Hand-object motion quality</strong> and their <strong>Interactions with Scene</strong>.",
+    "Click \"Next\" (or press <kbd>Enter</kbd>) to continue. On the last question, click \"Finish\" and your answers will be submitted automatically.",
   ],
   notes: [
     "Please use a laptop or desktop browser (Chrome, Firefox or Safari).",

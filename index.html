@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Hand-Object Interaction Generation User Study</title>
+<title>3D Hand-Object Interaction Generation User Study</title>
 <style>
   :root {
     --bg: #f6f7f9; --card: #fff; --text: #1d2330; --muted: #5b6475;
@@ -50,6 +50,7 @@
   .choices { display: flex; justify-content: center; gap: 16px; }
   .choice { min-width: 140px; padding: 12px 20px; font-size: 1rem; border: 2px solid var(--border);
             border-radius: 8px; background: var(--card); color: var(--text); cursor: pointer; }
+  kbd { font: .8em ui-monospace, SFMono-Regular, Menlo, monospace; padding: 1px 5px; border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 4px; background: var(--bg); }
   .choice.selected { border-color: var(--accent); background: var(--accent-soft); font-weight: 600; }
   .nav { text-align: right; margin-top: 16px; }
   button.primary { padding: 10px 28px; font-size: 1rem; border: 0; border-radius: 8px;
@@ -113,7 +114,8 @@
   const cfg = window.STUDY_CONFIG;
   const $ = (id) => document.getElementById(id);
   const shuffle = (a) => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
-  const fillList = (el, items) => items.forEach((t) => { const li = document.createElement("li"); li.textContent = t; el.appendChild(li); });
+  // Config text is author-written, so simple HTML (<strong>, <kbd>) is allowed.
+  const fillList = (el, items) => items.forEach((t) => { const li = document.createElement("li"); li.innerHTML = t; el.appendChild(li); });
 
   document.title = cfg.title;
   document.querySelectorAll(".study-title").forEach((el) => { el.textContent = cfg.title; });
@@ -149,7 +151,7 @@
   const choiceButtons = cfg.positions.map((pos, i) => {
     const b = document.createElement("button");
     b.className = "choice";
-    b.textContent = pos;
+    b.innerHTML = `${pos} <kbd>${pos[0]}</kbd>`;
     b.addEventListener("click", () => {
       choice = i;
       choiceButtons.forEach((x) => x.classList.toggle("selected", x === b));
@@ -185,6 +187,20 @@
     trialStart = performance.now();
     window.scrollTo({ top: $("progress-text").offsetTop - 16, behavior: "smooth" });
   }
+
+  // Keyboard: first letter of a position (L / R) chooses it, Enter = Next / Finish (or Start on the start page).
+  document.addEventListener("keydown", (e) => {
+    if (e.repeat || e.metaKey || e.ctrlKey || e.altKey) return;
+    if (!$("start").hidden) {
+      if (e.key === "Enter") { e.preventDefault(); $("start-btn").click(); }
+      return;
+    }
+    if ($("study").hidden) return;
+    const i = cfg.positions.findIndex((p) => p[0].toLowerCase() === e.key.toLowerCase());
+    if (i >= 0) { e.preventDefault(); choiceButtons[i].click(); }
+    // preventDefault also stops Enter from "clicking" a focused button a second time.
+    else if (e.key === "Enter") { e.preventDefault(); if (!$("next").disabled) $("next").click(); }
+  });
 
   $("replay").addEventListener("click", () => {
     videos.forEach((v) => { v.currentTime = 0; v.play(); });
