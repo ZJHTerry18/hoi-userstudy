@@ -3,12 +3,13 @@
 window.STUDY_CONFIG = {
   title: "3D Hand-Object Interaction Generation User Study",
   question: "Which hand-object motion looks more realistic in the scene?",
+  // Shown under the question on every page, and as instruction 4 on the start page.
+  criteria: "Evaluate based on <strong>Hand-object motion quality</strong> and the <strong>Relevance between Motion and Scene</strong>.",
   // Instructions may contain simple HTML such as <strong>.
   instructions: [
     "In each question you will see two rendered videos of hands interacting with an object in a 3D scene, shown side by side.",
     "Watch both videos carefully. They loop automatically; use \"Replay both\" to restart them together.",
     "Choose the video (Left or Right) whose hand-object motion looks more realistic in the scene. You can also press <kbd>←</kbd> or <kbd>→</kbd>.",
-    "Evaluate based on <strong>Hand-object motion quality</strong> and their <strong>Interactions with Scene</strong>.",
     "Click \"Next\" (or press <kbd>Enter</kbd>) to continue. On the last question, click \"Finish\" and your answers will be submitted automatically.",
   ],
   notes: [

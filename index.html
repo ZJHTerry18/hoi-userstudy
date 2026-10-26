@@ -47,6 +47,8 @@
   .controls { text-align: center; margin: 12px 0 0; }
   .question { margin-top: 16px; text-align: center; }
   .question p { font-size: 1.15rem; font-weight: 600; margin: 0 0 12px; }
+  .question p.criteria { display: inline-block; font-size: 1rem; font-weight: 400; margin: -4px 0 14px; padding: 6px 14px;
+                         background: var(--note-bg); border: 1px solid var(--note-border); border-radius: 8px; }
   .choices { display: flex; justify-content: center; gap: 16px; }
   .choice { min-width: 140px; padding: 12px 20px; font-size: 1rem; border: 2px solid var(--border);
             border-radius: 8px; background: var(--card); color: var(--text); cursor: pointer; }
@@ -95,6 +97,7 @@
 
     <section class="card question">
       <p id="question"></p>
+      <p class="criteria" id="criteria"></p>
       <div class="choices" id="choices"></div>
     </section>
     <div class="nav"><button class="primary" id="next" disabled>Next</button></div>
@@ -119,7 +122,11 @@
 
   document.title = cfg.title;
   document.querySelectorAll(".study-title").forEach((el) => { el.textContent = cfg.title; });
-  document.querySelectorAll(".instruction-list").forEach((el) => fillList(el, cfg.instructions));
+  // The criteria sit under the question during the study; on the start page they are instruction 4.
+  fillList(document.querySelector("#start .instruction-list"),
+    [...cfg.instructions.slice(0, 3), cfg.criteria, ...cfg.instructions.slice(3)]);
+  fillList(document.querySelector("#study .instruction-list"), cfg.instructions);
+  $("criteria").innerHTML = cfg.criteria;
   fillList($("notes"), cfg.notes.map((t) => t.replace("{n}", cfg.trials.length * cfg.comparisons.length)));
   $("question").textContent = cfg.question;
 
