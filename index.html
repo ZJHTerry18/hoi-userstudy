@@ -151,7 +151,7 @@
   const choiceButtons = cfg.positions.map((pos, i) => {
     const b = document.createElement("button");
     b.className = "choice";
-    b.innerHTML = `${pos} <kbd>${pos[0]}</kbd>`;
+    b.innerHTML = `${pos} <kbd>${cfg.shortcuts[i].label}</kbd>`;
     b.addEventListener("click", () => {
       choice = i;
       choiceButtons.forEach((x) => x.classList.toggle("selected", x === b));
@@ -188,7 +188,7 @@
     window.scrollTo({ top: $("progress-text").offsetTop - 16, behavior: "smooth" });
   }
 
-  // Keyboard: first letter of a position (L / R) chooses it, Enter = Next / Finish (or Start on the start page).
+  // Keyboard: cfg.shortcuts (← / →) choose a position, Enter = Next / Finish (or Start on the start page).
   document.addEventListener("keydown", (e) => {
     if (e.repeat || e.metaKey || e.ctrlKey || e.altKey) return;
     if (!$("start").hidden) {
@@ -196,8 +196,8 @@
       return;
     }
     if ($("study").hidden) return;
-    const i = cfg.positions.findIndex((p) => p[0].toLowerCase() === e.key.toLowerCase());
-    if (i >= 0) { e.preventDefault(); choiceButtons[i].click(); }
+    const i = cfg.shortcuts.findIndex((s) => s.key === e.key);
+    if (i >= 0) { e.preventDefault(); choiceButtons[i].click(); }  // also stops arrows scrolling the page
     // preventDefault also stops Enter from "clicking" a focused button a second time.
     else if (e.key === "Enter") { e.preventDefault(); if (!$("next").disabled) $("next").click(); }
   });

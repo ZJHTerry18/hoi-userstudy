@@ -7,7 +7,7 @@ window.STUDY_CONFIG = {
   instructions: [
     "In each question you will see two rendered videos of hands interacting with an object in a 3D scene, shown side by side.",
     "Watch both videos carefully. They loop automatically; use \"Replay both\" to restart them together.",
-    "Choose the video (Left or Right) whose hand-object motion looks more realistic in the scene. You can also press <kbd>L</kbd> or <kbd>R</kbd>.",
+    "Choose the video (Left or Right) whose hand-object motion looks more realistic in the scene. You can also press <kbd>←</kbd> or <kbd>→</kbd>.",
     "Evaluate based on <strong>Hand-object motion quality</strong> and their <strong>Interactions with Scene</strong>.",
     "Click \"Next\" (or press <kbd>Enter</kbd>) to continue. On the last question, click \"Finish\" and your answers will be submitted automatically.",
   ],
@@ -24,6 +24,8 @@ window.STUDY_CONFIG = {
   // Each sample becomes one question per comparison (keys into each sample's `videos`).
   comparisons: [["ours", "mdm"], ["ours", "bimart-ho"]],
   positions: ["Left", "Right"],
+  // Keyboard shortcut per position: KeyboardEvent.key and the label shown on the button.
+  shortcuts: [{ key: "ArrowLeft", label: "←" }, { key: "ArrowRight", label: "→" }],
   randomizePositions: true,  // randomly swap which method is on the left, per question
   randomizeOrder: true,      // shuffle question order per participant
   trials: window.STUDY_TRIALS,
