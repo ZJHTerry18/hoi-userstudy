@@ -10,7 +10,21 @@ window.STUDY_CONFIG = {
   title: "3D Hand-Object Interaction Generation User Study",
   question: "Which hand-object motion looks more realistic in the scene?",
   // Shown under the question on every page, and as instruction 4 on the start page.
-  criteria: "Evaluate based on <strong>Hand-object motion quality</strong> and the <strong>Relevance between Motion and Scene</strong>.",
+  criteria: "Evaluate based on <strong>Hand-object motion quality</strong> and the <strong>Motion Reality in Scene</strong>.",
+  // Text block at the top of the guidance (examples) page. HTML allowed.
+  guidance: `
+    <p>Evaluate based on <strong>Hand-object motion quality</strong> and the <strong>Motion Reality in Scene</strong>.</p>
+    <p><strong>(i) Hand-object Motion Quality</strong>. Good samples should be:</p>
+    <ul>
+      <li>Hand-object grasp or manipulation looks natural;</li>
+      <li>No hand-object penetration.</li>
+    </ul>
+    <p><strong>(ii) Motion Reality in Scene</strong>. Good samples should be:</p>
+    <ul>
+      <li>Hand-object activity looks natural in the scene.</li>
+      <li>Object lying on the scene surface when hand is away (not floating).</li>
+      <li>No hand-scene, object-scene penetrations.</li>
+    </ul>`,
   // Instructions may contain simple HTML such as <strong>.
   instructions: [
     "In each question you will see two rendered videos of hands interacting with an object in a 3D scene, shown side by side.",
