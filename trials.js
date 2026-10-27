@@ -20,14 +20,17 @@ window.STUDY_CONFIG = {
     "Click \"Next\" (or press <kbd>Enter</kbd>) to continue. On the last question, click \"Finish\" and your answers will be submitted automatically.",
   ],
   // Example clips shown after Start (and via "View Examples" during the questions).
+  // Optional `detail` is a smaller explanatory line shown under the points.
   examples: {
     good: [
       { src: "videos_selected/explanation/good_1.mp4", points: GOOD_POINTS },
       { src: "videos_selected/explanation/good_2.mp4", points: GOOD_POINTS },
     ],
     bad: [
-      { src: "videos_selected/explanation/bad_1.mp4", points: ["Unnatural hand-object interaction"] },
-      { src: "videos_selected/explanation/bad_2.mp4", points: ["Object motion unrealistic in the scene"] },
+      { src: "videos_selected/explanation/bad_1.mp4", points: ["Unnatural hand-object interaction"],
+        detail: "hand is not grasping the object properly" },
+      { src: "videos_selected/explanation/bad_2.mp4", points: ["Object motion unrealistic in the scene"],
+        detail: "object is not placed on surface" },
       { src: "videos_selected/explanation/bad_3.mp4", points: ["Penetration between hand, object and scene"] },
     ],
   },

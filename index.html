@@ -50,6 +50,7 @@
   .ex video { display: block; width: 100%; aspect-ratio: 1; border-radius: 6px; background: #fff; }
   .ex ul { list-style: none; margin: 10px 0 2px; padding: 0; }
   .ex li { display: flex; gap: 8px; margin-bottom: 4px; font-weight: 600; font-size: .95rem; }
+  .ex .detail { margin: 0 0 2px 28px; color: var(--text); font-size: .85rem; }  /* indented to line up with the point text */
   .ex.good li { color: var(--good); } .ex.bad li { color: var(--bad); }
   .ex .icon { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px;
               margin-top: 1px; border-radius: 50%; color: #fff; font-size: 12px; }
@@ -186,6 +187,7 @@
       const ul = document.createElement("ul");
       fillList(ul, ex.points.map((t) => `<span class="icon">${kind === "good" ? "✓" : "✕"}</span><span>${t}</span>`));
       card.append(v, ul);
+      if (ex.detail) card.appendChild(Object.assign(document.createElement("p"), { className: "detail", textContent: ex.detail }));
       $(`ex-${kind}`).appendChild(card);
       exVideos.push(v);
     }
