@@ -50,7 +50,7 @@ window.STUDY_CONFIG = {
   },
   notes: [
     "Please use a laptop or desktop browser (Chrome, Firefox or Safari).",
-    "It takes about 10–15 minutes and has {n} questions.",
+    "It takes about 5–10 minutes and has {n} questions.",
     "Don't refresh the page partway through: progress isn't saved and you would start over.",
   ],
   // Google Apps Script web app URL (see README, "Automatic result collection").
