@@ -175,7 +175,7 @@
     [...cfg.instructions.slice(0, 3), cfg.criteria, ...cfg.instructions.slice(3)]);
   fillList(document.querySelector("#study .instruction-list"), cfg.instructions);
   $("criteria").innerHTML = cfg.criteria;
-  fillList($("notes"), cfg.notes.map((t) => t.replace("{n}", cfg.trials.length * cfg.comparisons.length)));
+  fillList($("notes"), cfg.notes.map((t) => t.replace("{n}", cfg.questions.length)));
   $("question").textContent = cfg.question;
   $("guidance").innerHTML = cfg.guidance;
 
@@ -199,15 +199,12 @@
 
   const participantId = Math.random().toString(36).slice(2, 10);
   let startedAt;
-  // Each trial gets its own method -> column assignment.
-  // Expand each sample into one question per comparison, each with its own left/right assignment.
-  const questions = cfg.trials.flatMap((t) => cfg.comparisons.map((pair) => ({
-    ...t,
-    sample_id: t.id,
-    id: `${t.id}|${pair.join("-vs-")}`,
-    pair,
-    layout: cfg.randomizePositions ? shuffle([...pair]) : [...pair],
-  })));
+  // Questions are pairs of opaque clip IDs; the page never knows which method a clip is.
+  // Each question gets its own random left/right assignment.
+  const questions = cfg.questions.map((q) => ({
+    id: q.id,
+    layout: cfg.randomizePositions ? shuffle([...q.clips]) : [...q.clips],
+  }));
   const trials = cfg.randomizeOrder ? shuffle(questions) : questions;
   $("videos").style.setProperty("--cols", cfg.positions.length);
 
@@ -290,7 +287,7 @@
 
   function show() {
     const t = trials[idx];
-    t.layout.forEach((m, i) => { videos[i].src = t.videos[m]; });
+    t.layout.forEach((clip, i) => { videos[i].src = `clips/${clip}.mp4`; });
     choice = null;
     choiceButtons.forEach((b) => b.classList.remove("selected"));
     $("next").disabled = true;
@@ -323,18 +320,13 @@
 
   $("next").addEventListener("click", () => {
     const t = trials[idx];
-    const chosen = t.layout[choice];
     responses.push({
-      trial_id: t.id,
-      sample_id: t.sample_id,
-      dataset: t.dataset,
-      comparison: t.pair.join("-vs-"),
-      view: t.view,
+      question_id: t.id,
       order: idx,
-      layout: Object.fromEntries(cfg.positions.map((p, i) => [p.toLowerCase(), t.layout[i]])),
+      left_clip: t.layout[0],
+      right_clip: t.layout[1],
       choice_position: cfg.positions[choice].toLowerCase(),
-      chosen_method: chosen,
-      prefers_ours: chosen === "ours",
+      chosen_clip: t.layout[choice],
       response_time_s: +((performance.now() - trialStart) / 1000).toFixed(2),
       examples_opened: trialGuideOpens,
     });
@@ -373,19 +365,14 @@
   async function finish() {
     videos.forEach((v) => { v.pause(); v.removeAttribute("src"); });
     const finishedAt = new Date();
-    // e.g. {"ours-vs-mdm": {"ours": 14, "mdm": 6}, ...}
-    const counts = Object.fromEntries(cfg.comparisons.map((pair) => {
-      const rs = responses.filter((r) => r.comparison === pair.join("-vs-"));
-      return [pair.join("-vs-"), Object.fromEntries(pair.map((m) => [m, rs.filter((r) => r.chosen_method === m).length]))];
-    }));
     result = {
       study: cfg.title,
+      format: "blind-v1",  // clip IDs only; decode with tools/blind_map.json
       participant_id: participantId,
       started_at: startedAt.toISOString(),
       finished_at: finishedAt.toISOString(),
       user_agent: navigator.userAgent,
       n_trials: responses.length,
-      chosen_counts: counts,
       examples_opened: totalGuideOpens,
       responses,
     };

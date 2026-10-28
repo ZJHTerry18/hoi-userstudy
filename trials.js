@@ -1,4 +1,4 @@
-// Study configuration. The trial list itself (video paths) is generated into trials_data.js
+// Study configuration. The question list (blinded clip IDs) is generated into trials_data.js
 // by tools/build_selected.py.
 const GOOD_POINTS = [
   "Good hand-object interaction",
@@ -58,12 +58,11 @@ window.STUDY_CONFIG = {
   submitUrl: "https://script.google.com/macros/s/AKfycbwa9-hAouV1dXD-BEHsQYi48b25YE2yYqydy22uzRN6jgycDCQWHUewg3FAEYyocKCp/exec",
   // Shown only if automatic submission fails, so the participant can email the file instead.
   contactEmail: "zhaojiahe1@gmail.com",  // TODO: your email address
-  // Each sample becomes one question per comparison (keys into each sample's `videos`).
-  comparisons: [["ours", "mdm"], ["ours", "bimart-ho"]],
   positions: ["Left", "Right"],
   // Keyboard shortcut per position: KeyboardEvent.key and the label shown on the button.
   shortcuts: [{ key: "ArrowLeft", label: "←" }, { key: "ArrowRight", label: "→" }],
-  randomizePositions: true,  // randomly swap which method is on the left, per question
+  randomizePositions: true,  // randomly swap which clip is on the left, per question
   randomizeOrder: true,      // shuffle question order per participant
-  trials: window.STUDY_TRIALS,
+  // Blinded questions from trials_data.js: each is a pair of opaque clip IDs (see tools/build_selected.py).
+  questions: window.STUDY_QUESTIONS,
 };
